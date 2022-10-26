@@ -3,3 +3,4 @@ legacy/
 .ipynb_checkpoints/
 *.pyc
 *.pth
+exps/
