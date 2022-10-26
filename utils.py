@@ -4,6 +4,21 @@ from os import path as osp
 import json
 
 
+def plot_results_ade20k(idx_img, model):
+    ade20k_folder = "../../datasets/ADE20K_2021_17_01/"
+    ade20k_coco_json_path = osp.join(ade20k_folder, "coco-training.json")
+    with open(ade20k_coco_json_path) as jsonFile:
+        ade20k_coco_json = json.load(jsonFile)
+
+    # Image ade
+    ade20k_example = osp.join("../../datasets/ADE20K_2021_17_01/images/ADE/training/urban/street",
+                                ade20k_coco_json["images"][idx_img]["file_name"].replace("\\", "/"))
+    img_ade20k = mmcv.imread(ade20k_example)
+    result_ade20k = inference_detector(model, img_ade20k)
+
+    show_result_pyplot(model, img_ade20k, result_ade20k)
+
+    return img_ade20k, result_ade20k
 
 def plot_results(idx_img, model):
 
@@ -17,7 +32,7 @@ def plot_results(idx_img, model):
     with open(ade20k_coco_json_path) as jsonFile:
         ade20k_coco_json = json.load(jsonFile)
 
-    cfg_dict = {"model": {"roi_head": {"bbox_head": {"num_classes": 3}}}}
+    # cfg_dict = {"model": {"roi_head": {"bbox_head": {"num_classes": 3}}}}
 
     # Specify the path to model config and checkpoint file
     #config_file = 'configs/faster_rcnn_r50_fpn_1x_cocotwincityade20kmerged.py'
