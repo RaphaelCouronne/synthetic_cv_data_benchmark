@@ -19,7 +19,7 @@ def train_twincity(out_folder, load_from=None, seed=0, max_epochs = 12, use_tens
         # Classes
         #
         classes = ['Person']
-        classes = ('Window', 'Person', 'Vehicle')
+        # classes = ('Window', 'Person', 'Vehicle')
         if classes is not None:
             # Training
             cfg.data.train.classes = classes
@@ -53,7 +53,7 @@ def train_twincity(out_folder, load_from=None, seed=0, max_epochs = 12, use_tens
             cfg.log_config.hooks = [
                 dict(type='TextLoggerHook')]
 
-        cfg.log_config.interval = 10
+        cfg.log_config.interval = 20
         cfg.work_dir = f'{out_folder}'
         mmcv.mkdir_or_exist(os.path.abspath(cfg.work_dir))
 
@@ -73,10 +73,12 @@ def train_twincity(out_folder, load_from=None, seed=0, max_epochs = 12, use_tens
 if __name__ == '__main__':
 
     max_epochs = 20
-    out_folder = f"exps/pretrain_twincity/fromscratch-3classes-{max_epochs}-v2"
+    out_folder = f"exps/pretrain_twincity/fromscratch-1class-{max_epochs}-v2"
     myseed = 0
     #load_from = "exps/pretrain_twincity/v2/latest.pth"
     train_twincity(out_folder, seed=myseed, max_epochs=max_epochs, use_tensorboard=True)
+
+
 
     """ PeopleSansPeople
     We set the initial learning rate for all models to 0.02, the initial patience to 38, and the initial epsilon

@@ -34,8 +34,8 @@ def benchmark_finetuning(exp_folder, ade_size, pretrained_model=None, seed=0, ma
 
         #%% Runner
         cfg.runner.max_epochs = max_epochs
-        cfg.evaluation.interval = 2
-        cfg.log_config.interval = 3
+        cfg.evaluation.interval = 5
+        cfg.log_config.interval = 10
         cfg.checkpoint_config.interval = max_epochs
         cfg.seed = seed
         set_random_seed(seed, deterministic=False)
@@ -82,7 +82,10 @@ if __name__ == '__main__':
     classes = ('Window', 'Person', 'Vehicle')
     workdir = f'{exp_folder}/ade{ade_size}_pretrain{pretrained_model}'
 
-    img, result = inspect_results(workdir, classes, 20)
+    # img, result = inspect_results(workdir, classes, 20)
+
+
+
 
     """
     # With 3 classes
