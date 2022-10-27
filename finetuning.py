@@ -17,8 +17,9 @@ def train_twincity(out_folder, load_from=None, seed=0, max_epochs = 12, use_tens
         cfg_data_twincity = Config.fromfile("../synthetic_cv_data_benchmark/datasets/twincity.py")
 
         # Classes
-        # classes = ('Window', 'Person', 'Vehicle')
+        #
         classes = ['Person']
+        classes = ('Window', 'Person', 'Vehicle')
         if classes is not None:
             # Training
             cfg.data.train.classes = classes
@@ -72,7 +73,7 @@ def train_twincity(out_folder, load_from=None, seed=0, max_epochs = 12, use_tens
 if __name__ == '__main__':
 
     max_epochs = 20
-    out_folder = f"exps/pretrain_twincity/fromscratch-person-{max_epochs}"
+    out_folder = f"exps/pretrain_twincity/fromscratch-3classes-{max_epochs}-v2"
     myseed = 0
     #load_from = "exps/pretrain_twincity/v2/latest.pth"
     train_twincity(out_folder, seed=myseed, max_epochs=max_epochs, use_tensorboard=True)
