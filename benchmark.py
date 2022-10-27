@@ -44,13 +44,13 @@ def benchmark(pre_train, add_twincity, ade_size, i, exp_folder, seed=0, classes=
         else:
             cfg.model.roi_head.bbox_head.num_classes = 3
 
-        if not pre_train :
+        if not pre_train:
             cfg.load_from = None
         model = build_detector(cfg.model)
 
         #%% Runner
         cfg.runner.max_epochs = max_epochs
-        cfg.evaluation.interval = 4
+        cfg.evaluation.interval = 1
         cfg.checkpoint_config.interval = max_epochs
         cfg.seed = seed
         set_random_seed(seed, deterministic=False)
@@ -75,6 +75,7 @@ def benchmark(pre_train, add_twincity, ade_size, i, exp_folder, seed=0, classes=
             add_twincity_str = ""
         cfg.work_dir = f'{exp_folder}/c{len(classes)}_ade{ade_size}{add_twincity_str}_pretrain{1*pre_train}_it{i}'
         mmcv.mkdir_or_exist(os.path.abspath(cfg.work_dir))
+        cfg.log_config.interval = 1
 
         #%% Dump config file
         cfg.dump(osp.join(cfg.work_dir, "cfg.py"))
@@ -90,19 +91,24 @@ def benchmark(pre_train, add_twincity, ade_size, i, exp_folder, seed=0, classes=
 
 if __name__ == '__main__':
 
-    exp_folder = "exps/exp_bench-v1"
+    exp_folder = "exps/exp_bench-nobalanced-v3"
     pre_train = True
     i = 0
     myseed = 0
     add_twincity = False
-    ade_size = 512
+    ade_size = 64
+    classes = ('Window', 'Person', 'Vehicle')
+    # benchmark(pre_train, add_twincity, 64, i, exp_folder, myseed, classes, max_epochs=2*3)
+    # benchmark(pre_train, add_twincity, 128, i, exp_folder, myseed, classes, max_epochs=3)
 
+    """
     for i in range(1):
-        for classes in [('Person', 'Vehicle'), ('Window', 'Person', 'Vehicle')]:
-            for add_twincity in [False, True]:
-                for ade_size in [64, 128, 256, 512]:
-                    benchmark(pre_train, add_twincity, ade_size, i, exp_folder, myseed, classes)
-
+        for pre_train in [False, True]:
+            for classes in [('Window', 'Person', 'Vehicle')]: #('Person', 'Vehicle'),
+                for add_twincity in [False, True]:
+                    for ade_size in [64, 128, 256]:
+                        benchmark(pre_train, add_twincity, ade_size, i, exp_folder, myseed, classes, max_epochs=20)
+    """
 
 
 
