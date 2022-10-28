@@ -12,23 +12,25 @@ if __name__ == '__main__':
     Test launch
     """
 
-    pre_train = True
+    pre_train = False
     add_twincity = False
-    i = 0
+    i = 1
     exp_folder = "exps/launch_test"
     myseed = 0
     classes = ('Window', 'Person', 'Vehicle')
     max_epochs = 10
 
+    """
     ade_size = 64
     benchmark(pre_train, True, i, exp_folder, ade_size, myseed, classes,
               max_epochs=max_epochs,
               log_config_interval=int(ade_size / 64), evaluation_interval=int(max_epochs / 5))
+    """
 
-    ade_size = 2054
+    ade_size = 128
     benchmark(pre_train, add_twincity, i, exp_folder, ade_size, myseed, classes,
               max_epochs=max_epochs,
-              log_config_interval=int(ade_size / 64), evaluation_interval=int(max_epochs / 5))
+              log_config_interval=int(ade_size / 64), evaluation_interval=1)
 
     ade_size = 128
     benchmark(pre_train, add_twincity, i, exp_folder, ade_size, myseed, classes,

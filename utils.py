@@ -88,6 +88,7 @@ def prepare_cfg_runner(cfg, max_epochs, evaluation_interval, log_config_interval
     cfg.data.workers_per_gpu = 0
     cfg.gpu_ids = range(1)
     cfg.device = 'cuda'
+    cfg.optimizer.lr = 0.02 / 8
 
     # %% Logs, working dir to save files and logs.
     cfg.evaluation["save_best"] = "bbox_mAP"
