@@ -11,7 +11,7 @@ from utils import *
 
 
 
-def benchmark(pre_train, add_twincity, ade_size, i, exp_folder, seed=0, classes=None, max_epochs = 12, use_tensorboard=True,
+def benchmark(pre_train, add_twincity, i, exp_folder, ade_size=2054, seed=0, classes=None, max_epochs = 12, use_tensorboard=True,
               evaluation_interval=5, log_config_interval=5):
 
         #%% cfg base
@@ -20,7 +20,11 @@ def benchmark(pre_train, add_twincity, ade_size, i, exp_folder, seed=0, classes=
         #%% Data
         cfg_data_twincity = Config.fromfile("../synthetic_cv_data_benchmark/datasets/twincity.py")
         cfg_data_ade20k = Config.fromfile("../synthetic_cv_data_benchmark/datasets/ade20k.py")
-        cfg_data_ade20k.data.train.ann_file = f'../../datasets/ADE20K_2021_17_01/coco-training_{ade_size}.json'
+
+        if ade_size != 2054:
+            cfg_data_ade20k.data.train.ann_file = f'../../datasets/ADE20K_2021_17_01/coco-training_{ade_size}.json'
+        else:
+            cfg_data_ade20k.data.train.ann_file = f'../../datasets/ADE20K_2021_17_01/coco-training.json'
 
         # Classes
         if classes is not None:
@@ -60,7 +64,7 @@ def benchmark(pre_train, add_twincity, ade_size, i, exp_folder, seed=0, classes=
             add_twincity_str = "+TC"
         else:
             add_twincity_str = ""
-        cfg.work_dir = f'{exp_folder}/c{len(classes)}_ade{ade_size}{add_twincity_str}_pretrain{1*pre_train}_it{i}'
+        cfg.work_dir = f'{exp_folder}/c{len(classes)}_ade{ade_size}{add_twincity_str}_pretrain{1*pre_train}_it{i}_maxepochs{max_epochs}'
         mmcv.mkdir_or_exist(os.path.abspath(cfg.work_dir))
         cfg.dump(osp.join(cfg.work_dir, "cfg.py"))
 

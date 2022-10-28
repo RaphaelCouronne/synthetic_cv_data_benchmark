@@ -20,13 +20,18 @@ if __name__ == '__main__':
     classes = ('Window', 'Person', 'Vehicle')
     max_epochs = 10
 
-    ade_size = 1024
-    benchmark(pre_train, add_twincity, ade_size, i, exp_folder, myseed, classes,
+    ade_size = 64
+    benchmark(pre_train, True, i, exp_folder, ade_size, myseed, classes,
+              max_epochs=max_epochs,
+              log_config_interval=int(ade_size / 64), evaluation_interval=int(max_epochs / 5))
+
+    ade_size = 2054
+    benchmark(pre_train, add_twincity, i, exp_folder, ade_size, myseed, classes,
               max_epochs=max_epochs,
               log_config_interval=int(ade_size / 64), evaluation_interval=int(max_epochs / 5))
 
     ade_size = 128
-    benchmark(pre_train, add_twincity, ade_size, i, exp_folder, myseed, classes,
+    benchmark(pre_train, add_twincity, i, exp_folder, ade_size, myseed, classes,
               max_epochs=max_epochs,
               log_config_interval=int(ade_size / 64), evaluation_interval=int(max_epochs / 5))
 
@@ -37,20 +42,20 @@ if __name__ == '__main__':
     """
 
 
-    """
-    exp_folder = "exps/firstbenchmark-minimal"
+
+    exp_folder = "exps/firstbenchmark-minimal-adeOK"
     myseed = 0
 
     for i in range(1):
         for pre_train in [False]:
             for classes in [('Window', 'Person', 'Vehicle')]:
-                for add_twincity in [True]:
-                    for ade_size in [64, 256, 1024]:
+                for add_twincity in [True, False]:
+                    for ade_size in [128, 512, 2054]:
                         max_epochs = int(20)
                         benchmark(pre_train, add_twincity, ade_size, i, exp_folder, myseed, classes,
                                   max_epochs=max_epochs,
                                   log_config_interval=int(ade_size / 64), evaluation_interval=int(max_epochs / 5))
-    """
+
 
     """
 
