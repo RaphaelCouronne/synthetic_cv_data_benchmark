@@ -4,6 +4,12 @@ import os
 from os import path as osp
 import json
 from mmcv import Config
+from mmcv import Config
+from mmdet.apis import set_random_seed
+import mmcv
+from mmdet.models import build_detector
+import os.path as osp
+
 
 def plot_results_ade20k(idx_img, model):
     ade20k_folder = "../../datasets/ADE20K_2021_17_01/"
@@ -56,3 +62,39 @@ def inspect_results(workdir, classes, i=0):
     # %% Plot results
     img, result = plot_results_ade20k(i, model1)
     return img, result
+
+
+#%% Benchmark utils
+
+
+def prepare_cfg_model(cfg, load_from=None):
+    # %% Model
+    cfg.model.roi_head.bbox_head.num_classes = 3
+    cfg.load_from = load_from
+    model = build_detector(cfg.model)
+    return cfg, model
+
+
+def prepare_cfg_runner(cfg, max_epochs, evaluation_interval, log_config_interval, seed, use_tensorboard):
+    # %% Runner
+    cfg.runner.max_epochs = max_epochs
+    cfg.evaluation.interval = evaluation_interval
+    cfg.log_config.interval = log_config_interval
+    cfg.checkpoint_config.interval = max_epochs
+    cfg.seed = seed
+    set_random_seed(seed, deterministic=False)
+
+    # %% CUDA
+    cfg.data.workers_per_gpu = 0
+    cfg.gpu_ids = range(1)
+    cfg.device = 'cuda'
+
+    # %% Logs, working dir to save files and logs.
+    if use_tensorboard:
+        cfg.log_config.hooks = [
+            dict(type='TextLoggerHook'),
+            dict(type='TensorboardLoggerHook')]
+    else:
+        cfg.log_config.hooks = [
+            dict(type='TextLoggerHook')]
+    return cfg

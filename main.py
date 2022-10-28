@@ -13,6 +13,7 @@ if __name__ == '__main__':
     Note that we handle both cases of having seen and unseen classes
     """
 
+    """
     exp_folder = "exps/firstbenchmark"
     myseed = 0
     classes = ('Window', 'Person', 'Vehicle')
@@ -29,7 +30,7 @@ if __name__ == '__main__':
                             max_epochs = int(20)
 
                         benchmark(pre_train, add_twincity, ade_size, i, exp_folder, myseed, classes, max_epochs=max_epochs)
-
+    """
 
 
     """
@@ -41,7 +42,7 @@ if __name__ == '__main__':
     """
 
     max_epochs = 20
-    exp_folder = "exps/benchmark_finetuning"
+    exp_folder = "exps/benchmark_finetuningv3"
     myseed = 0
 
     pretrained_models = {
@@ -53,5 +54,9 @@ if __name__ == '__main__':
 
     # With 3 classes
     for pretrained_model in pretrained_models.keys():
-        for ade_size in [64, 128, 256, 512]:
-            benchmark_finetuning(exp_folder, ade_size, pretrained_model, myseed, max_epochs=max_epochs)
+        print(f"=== {pretrained_model} ===")
+        for ade_size in [256, 512]:
+            print(f"=== {ade_size} ===")
+            max_epochs = int(20 * (512 / ade_size))
+            benchmark_finetuning(exp_folder, ade_size, pretrained_model, myseed, max_epochs=max_epochs,
+                                 log_config_interval=int(ade_size/64), evaluation_interval=int(max_epochs/5))

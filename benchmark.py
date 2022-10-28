@@ -7,10 +7,12 @@ from mmdet.models import build_detector
 from mmdet.apis import train_detector
 import numpy as np
 import os.path as osp
+from utils import *
 
 
 
-def benchmark(pre_train, add_twincity, ade_size, i, exp_folder, seed=0, classes=None, max_epochs = 12, use_tensorboard=True):
+def benchmark(pre_train, add_twincity, ade_size, i, exp_folder, seed=0, classes=None, max_epochs = 12, use_tensorboard=True,
+              evaluation_interval=5, log_config_interval=5):
 
         #%% cfg base
         cfg = Config.fromfile('configs/faster_rcnn_r50_fpn_1x_cocotwincityade20kmerged.py') # Here val is ADE20k
@@ -31,7 +33,6 @@ def benchmark(pre_train, add_twincity, ade_size, i, exp_folder, seed=0, classes=
             # Validation
             cfg.data.val.classes = classes
 
-
         # Concatenate Datasets or not
         if add_twincity:
             datasets = [build_dataset([cfg_data_ade20k.data.train, cfg_data_twincity.data.train])]
@@ -44,64 +45,42 @@ def benchmark(pre_train, add_twincity, ade_size, i, exp_folder, seed=0, classes=
         else:
             cfg.model.roi_head.bbox_head.num_classes = 3
 
-        if not pre_train:
-            cfg.load_from = None
-        model = build_detector(cfg.model)
-
-        #%% Runner
-        cfg.runner.max_epochs = max_epochs
-        cfg.evaluation.interval = 1
-        cfg.checkpoint_config.interval = max_epochs
-        cfg.seed = seed
-        set_random_seed(seed, deterministic=False)
-
-        #%% CUDA
-        cfg.data.workers_per_gpu = 0
-        cfg.gpu_ids = range(1)
-        cfg.device = 'cuda'
-
-        # %% Logs, working dir to save files and logs.
-        if use_tensorboard:
-            cfg.log_config.hooks = [
-                dict(type='TextLoggerHook'),
-                dict(type='TensorboardLoggerHook')]
+        # Model
+        if pre_train:
+            load_from = "checkpoints/mask_rcnn_r50_caffe_fpn_mstrain-poly_3x_coco_bbox_mAP-0.408__segm_mAP-0.37_20200504_163245-42aa3d00.pth"
         else:
-            cfg.log_config.hooks = [
-                dict(type='TextLoggerHook')]
+            load_from = None
+        cfg, model = prepare_cfg_model(cfg, load_from)
 
+        # Runner
+        cfg = prepare_cfg_runner(cfg, max_epochs, evaluation_interval, log_config_interval, seed, use_tensorboard)
+
+        # Paths
         if add_twincity:
             add_twincity_str = "+TC"
         else:
             add_twincity_str = ""
         cfg.work_dir = f'{exp_folder}/c{len(classes)}_ade{ade_size}{add_twincity_str}_pretrain{1*pre_train}_it{i}'
         mmcv.mkdir_or_exist(os.path.abspath(cfg.work_dir))
-        cfg.log_config.interval = 1
-
-        #%% Dump config file
         cfg.dump(osp.join(cfg.work_dir, "cfg.py"))
-
-        #%%
-        print(cfg.data.train[0].classes)
-        print(cfg.data.train[1].classes)
-        print(cfg.data.val.classes)
 
         #%% Launch
         train_detector(model, datasets, cfg, distributed=False, validate=True)
 
-
+"""
 if __name__ == '__main__':
 
-    exp_folder = "exps/exp_bench-nobalanced-v3"
+    exp_folder = "exps/exp_bench-test"
     pre_train = True
     i = 0
     myseed = 0
     add_twincity = False
     ade_size = 64
     classes = ('Window', 'Person', 'Vehicle')
-    # benchmark(pre_train, add_twincity, 64, i, exp_folder, myseed, classes, max_epochs=2*3)
+    benchmark(pre_train, add_twincity, 64, i, exp_folder, myseed, classes, max_epochs=2*3)
     # benchmark(pre_train, add_twincity, 128, i, exp_folder, myseed, classes, max_epochs=3)
 
-    """
+    
     for i in range(1):
         for pre_train in [False, True]:
             for classes in [('Window', 'Person', 'Vehicle')]: #('Person', 'Vehicle'),
