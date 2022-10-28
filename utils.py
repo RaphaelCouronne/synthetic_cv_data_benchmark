@@ -90,6 +90,7 @@ def prepare_cfg_runner(cfg, max_epochs, evaluation_interval, log_config_interval
     cfg.device = 'cuda'
 
     # %% Logs, working dir to save files and logs.
+    cfg.evaluation["save_best"] = "bbox_mAP"
     if use_tensorboard:
         cfg.log_config.hooks = [
             dict(type='TextLoggerHook'),
