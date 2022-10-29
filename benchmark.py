@@ -56,6 +56,7 @@ def benchmark(pre_train, add_twincity, i, exp_folder, ade_size=2054, seed=0, cla
             load_from = None
         cfg, model = prepare_cfg_model(cfg, load_from)
 
+
         # Runner
         cfg = prepare_cfg_runner(cfg, max_epochs, evaluation_interval, log_config_interval, seed, use_tensorboard)
 
