@@ -12,7 +12,7 @@ from utils import *
 
 
 
-def benchmark_finetuning(exp_folder, ade_size, pretrained_model_name="", pretrained_model_path=None, seed=0, max_epochs = 12, use_tensorboard=True,
+def benchmark_finetuning(exp_folder, ade_size, classes=None, pretrained_model_name="", pretrained_model_path=None, seed=0, max_epochs = 12, use_tensorboard=True,
                          evaluation_interval=5, log_config_interval=5):
 
         #%% cfg base
@@ -23,10 +23,17 @@ def benchmark_finetuning(exp_folder, ade_size, pretrained_model_name="", pretrai
         cfg_data_ade20k.data.train.ann_file = f'../../datasets/ADE20K_2021_17_01/coco-training_{ade_size}.json'
 
         # Concatenate Datasets or not
+        if classes is not None:
+                cfg_data_ade20k.data.train.classes = classes
         datasets = [build_dataset([cfg_data_ade20k.data.train])]
 
         # Model
         load_from = pretrained_model_path
+        if classes is not None:
+            cfg.model.roi_head.bbox_head.num_classes = len(classes)
+        else:
+            cfg.model.roi_head.bbox_head.num_classes = 3
+
         cfg, model = prepare_cfg_model(cfg, load_from)
 
         # Runner

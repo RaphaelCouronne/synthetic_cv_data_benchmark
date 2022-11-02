@@ -69,7 +69,6 @@ def inspect_results(workdir, classes, i=0):
 
 def prepare_cfg_model(cfg, load_from=None):
     # %% Model
-    cfg.model.roi_head.bbox_head.num_classes = 3
     cfg.load_from = load_from
     model = build_detector(cfg.model)
     return cfg, model

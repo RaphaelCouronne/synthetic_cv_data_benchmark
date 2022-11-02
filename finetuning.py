@@ -8,7 +8,7 @@ from mmdet.apis import train_detector
 import numpy as np
 import os.path as osp
 
-def train_twincity(out_folder, load_from=None, seed=0, max_epochs = 12, use_tensorboard=True):
+def train_twincity(out_folder, classes, load_from=None, seed=0, max_epochs = 12, use_tensorboard=True):
 
         #%% cfg base
         cfg = Config.fromfile('configs/faster_rcnn_r50_fpn_1x_cocotwincity.py') # Here val is ADE20k
@@ -18,8 +18,6 @@ def train_twincity(out_folder, load_from=None, seed=0, max_epochs = 12, use_tens
 
         # Classes
         #
-        classes = ['Person']
-        # classes = ('Window', 'Person', 'Vehicle')
         if classes is not None:
             # Training
             cfg.data.train.classes = classes
@@ -73,10 +71,12 @@ def train_twincity(out_folder, load_from=None, seed=0, max_epochs = 12, use_tens
 if __name__ == '__main__':
 
     max_epochs = 20
-    out_folder = f"exps/pretrain_twincity/fromscratch-1class-{max_epochs}-v2"
+    out_folder = f"exps/pretrain_twincity/fromscratch-1class-{max_epochs}-v3"
     myseed = 0
     #load_from = "exps/pretrain_twincity/v2/latest.pth"
-    train_twincity(out_folder, seed=myseed, max_epochs=max_epochs, use_tensorboard=True)
+    classes = ['Person']
+    # classes = ('Window', 'Person', 'Vehicle')
+    train_twincity(out_folder, classes, seed=myseed, max_epochs=max_epochs, use_tensorboard=True)
 
 
 
