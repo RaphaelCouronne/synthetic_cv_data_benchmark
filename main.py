@@ -88,9 +88,9 @@ if __name__ == '__main__':
 
     pretrained_models = {
         # "nopretrain": None,
-        # "coco": "checkpoints/mask_rcnn_r50_caffe_fpn_mstrain-poly_3x_coco_bbox_mAP-0.408__segm_mAP-0.37_20200504_163245-42aa3d00.pth",
-        "twincity3": "checkpoints/twincity-3class.pth",
-        # "twincity1": "checkpoints/twincity-1class.pth",
+         "coco": "checkpoints/mask_rcnn_r50_caffe_fpn_mstrain-poly_3x_coco_bbox_mAP-0.408__segm_mAP-0.37_20200504_163245-42aa3d00.pth",
+        # "twincity3": "checkpoints/twincity-3class.pth",
+        # "twincity1": "checkpoints/twincity-1class(person).pth",
     }
 
     """
@@ -108,7 +108,7 @@ if __name__ == '__main__':
 
     for (pretrained_model_name, pretrained_model_path) in pretrained_models.items():
         print(f"=== {pretrained_model_name} ===")
-        for ade_size in [512, 2054]:
+        for ade_size in [2054]:
             print(f"=== {ade_size} ===")
             # max_epochs = int(20 * (2054 / ade_size))
             max_epochs = 15
@@ -139,18 +139,19 @@ if __name__ == '__main__':
         ade20k_coco_json = json.load(jsonFile)
     print(len(ade20k_coco_json["images"]))
 
-    """
-    Dataset properties
-
-
+    #%%
     from mmcv import Config
+    from benchmark import benchmark
+    from benchmark_finetuning import benchmark_finetuning
+    from mmdet.datasets import build_dataset
+
     ade_size = 128
     classes = ('Window', 'Person', 'Vehicle')
 
-    # %% cfg base
+    # cfg base
     cfg = Config.fromfile('configs/faster_rcnn_r50_fpn_1x_cocotwincityade20kmerged.py')  # Here val is ADE20k
 
-    # %% Data
+    #  Data
     cfg_data_twincity = Config.fromfile("../synthetic_cv_data_benchmark/datasets/twincity.py")
     cfg_data_ade20k = Config.fromfile("../synthetic_cv_data_benchmark/datasets/ade20k.py")
 
@@ -176,4 +177,3 @@ if __name__ == '__main__':
             cfg_data_ade20k.data.train.ann_file = f'../../datasets/ADE20K_2021_17_01/coco-training.json'
 
         print(build_dataset([cfg_data_ade20k.data.train]).datasets)
-    """
